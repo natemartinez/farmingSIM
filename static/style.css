@@ -1,0 +1,388 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    min-height: 100vh;
+}
+
+h1 {
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.farm-grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 800px;
+    height: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
+    border: 3px solid #34495e;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.grid-cell {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background: linear-gradient(135deg, #8fbc8f 0%, #90ee90 50%, #98fb98 100%);
+    border: 1px solid #6b8e6b;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        inset 0 0 0 1px rgba(255,255,255,0.3),
+        0 2px 4px rgba(0,0,0,0.2);
+}
+
+.grid-cell.drag-over {
+    background: linear-gradient(135deg, #3498db 0%, #5dade2 50%, #85c1e9 100%);
+    border-color: #2980b9;
+    transform: scale(1.1);
+    box-shadow: 
+        inset 0 0 0 2px rgba(255,255,255,0.6),
+        0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.grid-cell:hover {
+    background: linear-gradient(135deg, #3498db 0%, #5dade2 50%, #85c1e9 100%);
+    cursor: pointer;
+    transform: scale(1.05);
+    box-shadow: 
+        inset 0 0 0 1px rgba(255,255,255,0.4),
+        0 4px 8px rgba(0,0,0,0.3);
+}
+
+.grid-cell.occupied {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #cd853f 100%);
+}
+
+.object-emoji {
+    font-size: 1.2em;
+    pointer-events: none;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    cursor: grab;
+}
+
+.grid-cell .object-emoji {
+    cursor: grab;
+}
+
+.grid-cell .object-emoji:active {
+    cursor: grabbing;
+}
+
+.drag-feedback {
+    color: #3498db;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin-top: 10px;
+    min-height: 20px;
+}
+
+/* Object Controls Section */
+.object-controls {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.instructions {
+    color: #f39c12;
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Object Palette */
+.object-palette {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.palette-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 200px;
+}
+
+.palette-section h3 {
+    color: #fff;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.object-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.draggable-object {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: grab;
+    transition: all 0.3s ease;
+    user-select: none;
+    min-width: 80px;
+}
+
+.draggable-object:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.draggable-object:active {
+    cursor: grabbing;
+}
+
+.draggable-object.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+.draggable-object .emoji {
+    font-size: 2em;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.draggable-object .name {
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.draggable-object .value {
+    color: #f39c12;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.object-controls h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.control-section {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.control-section label {
+    color: #fff;
+    font-weight: bold;
+    min-width: 80px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.control-section select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.control-section button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #27ae60;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.control-section button:hover:not(:disabled) {
+    background-color: #2ecc71;
+}
+
+.control-section button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.info-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#object-info {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#placement-instructions,
+#removal-instructions {
+    color: #f39c12;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.6; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .farm-grid {
+        width: 95vw;
+        height: 400px;
+        transform: scale(0.8);
+    }
+    
+    .grid-cell {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .object-emoji {
+        font-size: 1em;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    .object-controls {
+        margin: 20px 10px;
+        padding: 15px;
+    }
+    
+    .control-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .control-section button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .object-palette {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .palette-section {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .draggable-object {
+        min-width: 60px;
+        padding: 8px;
+    }
+    
+    .draggable-object .emoji {
+        font-size: 1.5em;
+    }
+    
+    .draggable-object .name {
+        font-size: 11px;
+    }
+    
+    .draggable-object .value {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .farm-grid {
+        transform: scale(0.6);
+        height: 300px;
+    }
+    
+    .grid-cell {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .object-emoji {
+        font-size: 0.8em;
+    }
+    
+    .object-palette {
+        gap: 10px;
+    }
+    
+    .palette-section {
+        padding: 10px;
+    }
+    
+    .palette-section h3 {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+    
+    .object-items {
+        gap: 8px;
+    }
+    
+    .draggable-object {
+        min-width: 50px;
+        padding: 6px;
+    }
+    
+    .draggable-object .emoji {
+        font-size: 1.2em;
+        margin-bottom: 3px;
+    }
+    
+    .draggable-object .name {
+        font-size: 10px;
+    }
+    
+    .draggable-object .value {
+        font-size: 9px;
+    }
+}
