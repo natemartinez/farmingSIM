@@ -1,388 +1,552 @@
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
-    color: white;
-    text-align: center;
-    padding: 20px;
     margin: 0;
-    min-height: 100vh;
+    padding: 0;
+    background-color: #282626;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
 }
 
-h1 {
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.farm-grid {
+.main-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
     display: flex;
-    flex-wrap: wrap;
-    width: 800px;
-    height: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background: linear-gradient(135deg, #2c5530 0%, #4a7c59 100%);
-    border: 3px solid #34495e;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Game Header */
+.game-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #4a7c59, #2d5233);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    background: linear-gradient(135deg, rgba(74, 124, 89, 0.9), rgba(45, 82, 51, 0.9));
+}
+
+.logo {
+    font-size: 24px;
+    background: #ffd700;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.5px;
+}
+
+/* Farm Area - Clean Background */
+.farm-grid {
+    width: calc(100vw - 40px);
+    height: calc(100vh - 40px);
+    background: linear-gradient(45deg, #228B22 25%, #2d9a2d 25%, #2d9a2d 50%, #228B22 50%, #228B22 75%, #2d9a2d 75%);
+    background-size: 40px 40px;
+    border: 3px solid #1a6b1a;
+    position: relative;
+    z-index: 1;
+    border-radius: 8px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    cursor: crosshair;
+    overflow: hidden;
+}
+
+.farm-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 60% 80%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100px 100px, 150px 150px;
+    pointer-events: none;
+}
+
+.farm-grid:hover {
+    background: linear-gradient(45deg, #2d9a2d 25%, #32a532 25%, #32a532 50%, #2d9a2d 50%, #2d9a2d 75%, #32a532 75%);
+    background-size: 40px 40px;
+}
+
+/* Menu Squares - Floating Over Map */
+.menu-squares {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    z-index: 20;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.menu-square {
+    width: 75px;
+    height: 75px;
+    background: linear-gradient(135deg, rgba(74, 74, 74, 0.9), rgba(42, 42, 42, 0.9));
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
     position: relative;
     overflow: hidden;
 }
 
-.grid-cell {
-    width: 30px;
-    height: 30px;
+.menu-square::before {
+    content: '';
     position: absolute;
-    background: linear-gradient(135deg, #8fbc8f 0%, #90ee90 50%, #98fb98 100%);
-    border: 1px solid #6b8e6b;
-    transition: all 0.2s ease;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-square:hover {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(90, 90, 90, 0.95), rgba(58, 58, 58, 0.95));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.menu-square:hover::before {
+    opacity: 1;
+}
+
+.menu-square:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.square-icon {
+    font-size: 22px;
+    margin-bottom: 3px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    z-index: 1;
+    position: relative;
+}
+
+.square-label {
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    position: relative;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #3a3a3a;
+    border: 2px solid #666;
+    border-radius: 8px;
+    width: 320px;
+    max-height: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+    padding: 12px 16px;
+    border-bottom: 2px solid #666;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.close-btn {
+    color: #ccc;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.close-btn:hover {
+    color: #ffd700;
+}
+
+.modal-body {
+    padding: 16px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+/* Modal Content Styling */
+
+/* Resource Items */
+.resource-item, .production-item {
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: 
-        inset 0 0 0 1px rgba(255,255,255,0.3),
-        0 2px 4px rgba(0,0,0,0.2);
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    border-left: 3px solid #4a7c4a;
 }
 
-.grid-cell.drag-over {
-    background: linear-gradient(135deg, #3498db 0%, #5dade2 50%, #85c1e9 100%);
-    border-color: #2980b9;
-    transform: scale(1.1);
-    box-shadow: 
-        inset 0 0 0 2px rgba(255,255,255,0.6),
-        0 4px 12px rgba(52, 152, 219, 0.4);
+.production-item {
+    border-left-color: #7c4a7c;
 }
 
-.grid-cell:hover {
-    background: linear-gradient(135deg, #3498db 0%, #5dade2 50%, #85c1e9 100%);
-    cursor: pointer;
-    transform: scale(1.05);
-    box-shadow: 
-        inset 0 0 0 1px rgba(255,255,255,0.4),
-        0 4px 8px rgba(0,0,0,0.3);
-}
-
-.grid-cell.occupied {
-    background: linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #cd853f 100%);
-}
-
-.object-emoji {
-    font-size: 1.2em;
-    pointer-events: none;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-    cursor: grab;
-}
-
-.grid-cell .object-emoji {
-    cursor: grab;
-}
-
-.grid-cell .object-emoji:active {
-    cursor: grabbing;
-}
-
-.drag-feedback {
-    color: #3498db;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    margin-top: 10px;
-    min-height: 20px;
-}
-
-/* Object Controls Section */
-.object-controls {
-    max-width: 1000px;
-    margin: 30px auto;
-    padding: 25px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.instructions {
-    color: #f39c12;
+.resource-icon, .production-icon {
     font-size: 16px;
-    margin-bottom: 20px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
-
-/* Object Palette */
-.object-palette {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.palette-section {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    min-width: 200px;
-}
-
-.palette-section h3 {
-    color: #fff;
-    margin: 0 0 15px 0;
-    font-size: 1.2em;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin-right: 8px;
+    width: 20px;
     text-align: center;
 }
 
-.object-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+.resource-name, .production-name {
+    flex: 1;
+    font-weight: bold;
+    font-size: 13px;
 }
 
-.draggable-object {
+.resource-amount {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.production-amount {
+    color: #90EE90;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+/* Building Grid */
+.building-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.building-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    cursor: grab;
-    transition: all 0.3s ease;
-    user-select: none;
-    min-width: 80px;
+    padding: 12px 8px;
+    background-color: #5a4d3d;
+    border: 2px solid #7c6a4a;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.draggable-object:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+.building-btn:hover {
+    background-color: #6a5d4d;
+    border-color: #ffd700;
+    transform: translateY(-1px);
 }
 
-.draggable-object:active {
-    cursor: grabbing;
+.building-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
 }
 
-.draggable-object.dragging {
-    opacity: 0.5;
-    transform: rotate(5deg);
-}
-
-.draggable-object .emoji {
-    font-size: 2em;
-    margin-bottom: 5px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-
-.draggable-object .name {
-    color: #fff;
-    font-size: 12px;
+.building-name {
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    margin-bottom: 2px;
+    font-size: 11px;
+}
+
+.building-cost {
+    font-size: 9px;
+    color: #ccc;
+}
+
+/* Animal Controls */
+.animal-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.animal-btn {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    background-color: #5a3d4d;
+    border: 2px solid #7c4a6a;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.animal-btn:hover {
+    background-color: #6a4d5d;
+    border-color: #ffd700;
+}
+
+.animal-icon {
+    font-size: 16px;
+    margin-right: 8px;
+    width: 20px;
     text-align: center;
 }
 
-.draggable-object .value {
-    color: #f39c12;
-    font-size: 11px;
+.animal-name {
+    flex: 1;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    font-size: 12px;
 }
 
-.object-controls h2 {
-    color: #fff;
-    margin-bottom: 20px;
-    font-size: 1.8em;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+.animal-cost {
+    font-size: 10px;
+    color: #ccc;
 }
 
-.control-section {
-    margin-bottom: 15px;
+.animal-info {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #7c4a6a;
+}
+
+.animal-info h4 {
+    margin: 0 0 8px 0;
+    color: #ffd700;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.animal-count {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.animal-count span {
+    font-size: 12px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
-.control-section label {
-    color: #fff;
-    font-weight: bold;
-    min-width: 80px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
-
-.control-section select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-    font-size: 14px;
-    min-width: 200px;
-}
-
-.control-section button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #27ae60;
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    background-color: #3d4d5a;
+    border: 2px solid #4a6a7c;
+    border-radius: 6px;
     color: white;
-    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-right: 10px;
+    transition: all 0.2s;
 }
 
-.control-section button:hover:not(:disabled) {
-    background-color: #2ecc71;
+.action-btn:hover {
+    background-color: #4d5d6a;
+    border-color: #ffd700;
+    transform: translateY(-1px);
 }
 
-.control-section button:disabled {
-    background-color: #95a5a6;
-    cursor: not-allowed;
+.action-icon {
+    font-size: 18px;
+    margin-bottom: 4px;
 }
 
-.info-section {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-#object-info {
-    color: #fff;
-    font-size: 16px;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
-
-#placement-instructions,
-#removal-instructions {
-    color: #f39c12;
+.action-btn span:last-child {
+    font-size: 10px;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    animation: blink 1.5s infinite;
 }
 
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0.6; }
+/* Game Status */
+.game-status p {
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 4px 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+.game-status span {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.save-btn, .menu-btn {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    background-color: #4d3d5a;
+    border: 2px solid #6a4a7c;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.save-btn:hover, .menu-btn:hover {
+    background-color: #5d4d6a;
+    border-color: #ffd700;
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 1000px) {
     .farm-grid {
-        width: 95vw;
-        height: 400px;
-        transform: scale(0.8);
+        width: calc(100vw - 20px);
+        height: calc(100vh - 120px);
+        background-size: 30px 30px;
     }
     
-    .grid-cell {
-        width: 20px;
-        height: 20px;
+    .game-header {
+        top: 10px;
+        left: 10px;
+        padding: 8px 12px;
     }
     
-    .object-emoji {
-        font-size: 1em;
+    .logo {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
     }
     
-    h1 {
-        font-size: 2em;
+    .game-title {
+        font-size: 16px;
     }
     
-    .object-controls {
-        margin: 20px 10px;
-        padding: 15px;
-    }
-    
-    .control-section {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-    
-    .control-section button {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-    
-    .object-palette {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .palette-section {
-        min-width: auto;
-        width: 100%;
-    }
-    
-    .draggable-object {
-        min-width: 60px;
-        padding: 8px;
-    }
-    
-    .draggable-object .emoji {
-        font-size: 1.5em;
-    }
-    
-    .draggable-object .name {
-        font-size: 11px;
-    }
-    
-    .draggable-object .value {
-        font-size: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .farm-grid {
-        transform: scale(0.6);
-        height: 300px;
-    }
-    
-    .grid-cell {
-        width: 16px;
-        height: 16px;
-    }
-    
-    .object-emoji {
-        font-size: 0.8em;
-    }
-    
-    .object-palette {
-        gap: 10px;
-    }
-    
-    .palette-section {
+    .menu-squares {
+        bottom: 20px;
+        right: 20px;
         padding: 10px;
-    }
-    
-    .palette-section h3 {
-        font-size: 1em;
-        margin-bottom: 10px;
-    }
-    
-    .object-items {
         gap: 8px;
     }
     
-    .draggable-object {
-        min-width: 50px;
-        padding: 6px;
+    .menu-square {
+        width: 65px;
+        height: 65px;
     }
     
-    .draggable-object .emoji {
-        font-size: 1.2em;
-        margin-bottom: 3px;
-    }
-    
-    .draggable-object .name {
-        font-size: 10px;
-    }
-    
-    .draggable-object .value {
-        font-size: 9px;
+    .modal-content {
+        width: 90vw;
+        max-width: 350px;
     }
 }
+
+@media (max-width: 600px) {
+    .farm-grid {
+        width: calc(100vw - 10px);
+        height: calc(100vh - 100px);
+        background-size: 20px 20px;
+    }
+    
+    .game-header {
+        padding: 6px 10px;
+    }
+    
+    .logo {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .game-title {
+        font-size: 14px;
+    }
+    
+    .menu-squares {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 15px;
+        right: 15px;
+        padding: 8px;
+        gap: 6px;
+    }
+    
+    .menu-square {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .square-icon {
+        font-size: 18px;
+    }
+    
+    .square-label {
+        font-size: 8px;
+    }
+    
+    .modal-content {
+        width: 95vw;
+        max-width: 320px;
+    }
+}
+
