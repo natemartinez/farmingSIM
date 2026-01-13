@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  farmingsim:
+    build: .
+    ports:
+      - "5002:5002"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_DEBUG=1
+    command: python app.py

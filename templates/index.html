@@ -3,25 +3,54 @@
 <head>
     <title>Farming Simulation</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
 </head>
 <body>
     
     <div class="main-container">
-        <!-- Header Section -->
-        <div class="game-header">
-            <div class="logo">🚜</div>
-            <h1 class="game-title">FarmingSIM</h1>
+        <div id="product-wrapper">
+            <div class="product-stats">
+                <div class="production-item">
+                    <span class="production-icon">🥛</span>
+                    <span class="production-surplus"></span>
+                    <span class="production-amount">+12</span>
+                </div>
+                <div class="production-item">
+                    <span class="production-icon">🥚</span>
+                    <span class="production-surplus"></span>
+                    <span class="production-amount">+8</span>
+                </div>
+                <div class="production-item">
+                    <span class="production-icon">🧶</span>
+                    <span class="production-surplus"></span>
+                    <span class="production-amount">+4</span>
+                </div>
+                <div class="production-item">
+                    <span class="production-icon">🌾</span>
+                    <span class="production-surplus"></span>
+                    <span class="production-amount">+15</span>
+                </div>
+                <div class="production-item">
+                    <span class="production-icon">🪙</span>
+                    <span class="production-surplus"></span>
+                    <span class="production-name">Income/day:</span>
+                    <span class="production-amount">+245</span>
+                </div>
+            </div>
         </div>
 
         <div class="farm-grid" id="farm-grid">
+            <!-- Grid cells will be dynamically created by JavaScript -->
+        </div>
+
+        <div id="tooltip" class="tooltip" style="display: none;">
+            <div class="tooltip-content">
+                <div class="tooltip-title"></div>
+                <div class="tooltip-details"></div>
+            </div>
         </div>
         
-        <!-- Bottom Right Menu Squares -->
         <div class="menu-squares">
-            <button class="menu-square" data-modal="resources">
-                <span class="square-icon">🪙</span>
-                <span class="square-label">Resources</span>
-            </button>
             <button class="menu-square" data-modal="buildings">
                 <span class="square-icon">🏠</span>
                 <span class="square-label">Buildings</span>
@@ -44,51 +73,6 @@
             </button>
         </div>
     </div>
-
-    <!-- Modal Windows -->
-    <!-- Resources Modal -->
-    <div id="resources-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Resources</h3>
-                <span class="close-btn" data-modal="resources">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="resource-item">
-                    <span class="resource-icon">🪙</span>
-                    <span class="resource-name">Gold:</span>
-                    <span class="resource-amount" id="gold-amount">{{ resources.gold }}</span>
-                </div>
-                <div class="resource-item">
-                    <span class="resource-icon">🪵</span>
-                    <span class="resource-name">Wood:</span>
-                    <span class="resource-amount" id="wood-amount">{{ resources.wood }}</span>
-                </div>
-                <div class="resource-item">
-                    <span class="resource-icon">🪨</span>
-                    <span class="resource-name">Stone:</span>
-                    <span class="resource-amount" id="stone-amount">{{ resources.stone }}</span>
-                </div>
-                <div class="resource-item">
-                    <span class="resource-icon">🍎</span>
-                    <span class="resource-name">Food:</span>
-                    <span class="resource-amount" id="food-amount">{{ resources.food }}</span>
-                </div>
-                <div class="resource-item">
-                    <span class="resource-icon">🌱</span>
-                    <span class="resource-name">Seeds:</span>
-                    <span class="resource-amount" id="seeds-amount">{{ resources.seeds }}</span>
-                </div>
-                <div class="resource-item">
-                    <span class="resource-icon">💧</span>
-                    <span class="resource-name">Water:</span>
-                    <span class="resource-amount" id="water-amount">{{ resources.water }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Buildings Modal -->
     <div id="buildings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -97,32 +81,23 @@
             </div>
             <div class="modal-body">
                 <div class="building-grid">
-                    <button class="building-btn" data-building="house">
-                        <span class="building-icon">🏠</span>
-                        <span class="building-name">House</span>
-                        <span class="building-cost">50🪵 30🪨</span>
+                    {% for building_key, building_data in buildings.items() %}
+                    <button class="building-btn" data-building="{{ building_key }}" data-type="building">
+                        <span class="building-icon">{{ building_data.icon }}</span>
+                        <span class="building-name">{{ building_data.name }}</span>
+                        <span class="building-cost">
+                            {% for resource, amount in building_data.cost.items() %}
+                                {{ amount }}
+                                {% if resource == 'gold' %}🪙{% elif resource == 'wood' %}🪵{% elif resource == 'stone' %}🪨{% endif %}
+                            {% endfor %}
+                        </span>
                     </button>
-                    <button class="building-btn" data-building="barn">
-                        <span class="building-icon">🏚️</span>
-                        <span class="building-name">Barn</span>
-                        <span class="building-cost">75🪵 50🪨</span>
-                    </button>
-                    <button class="building-btn" data-building="well">
-                        <span class="building-icon">⛲</span>
-                        <span class="building-name">Well</span>
-                        <span class="building-cost">100🪨 50🪙</span>
-                    </button>
-                    <button class="building-btn" data-building="fence">
-                        <span class="building-icon">🪵</span>
-                        <span class="building-name">Fence</span>
-                        <span class="building-cost">10🪵</span>
-                    </button>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Animals Modal -->
     <div id="animals-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -131,59 +106,56 @@
             </div>
             <div class="modal-body">
                 <div class="animal-controls">
-                    <button class="animal-btn" data-animal="cow">
-                        <span class="animal-icon">🐄</span>
-                        <span class="animal-name">Cow</span>
-                        <span class="animal-cost">150🪙</span>
+                    {% for animal_key, animal_data in animals_data.items() %}
+                    <button class="animal-btn" data-animal="{{ animal_key }}" data-type="animal">
+                        <span class="animal-icon">{{ animal_data.icon }}</span>
+                        <span class="animal-name">{{ animal_data.name }}</span>
+                        <span class="animal-cost">
+                            {% for resource, amount in animal_data.cost.items() %}
+                                {{ amount }}
+                                {% if resource == 'gold' %}🪙{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="animal-info-text">+{{ animal_data.production_value }}🪙/day</span>
                     </button>
-                    <button class="animal-btn" data-animal="chicken">
-                        <span class="animal-icon">🐔</span>
-                        <span class="animal-name">Chicken</span>
-                        <span class="animal-cost">50🪙</span>
-                    </button>
-                    <button class="animal-btn" data-animal="sheep">
-                        <span class="animal-icon">🐑</span>
-                        <span class="animal-name">Sheep</span>
-                        <span class="animal-cost">100🪙</span>
-                    </button>
+                    {% endfor %}
                 </div>
                 <div class="animal-info">
                     <h4>Farm Animals</h4>
                     <div class="animal-count">
-                        <span>🐄 Cows: <span id="cow-count">{{ animals.cows }}</span></span>
-                        <span>🐔 Chickens: <span id="chicken-count">{{ animals.chickens }}</span></span>
-                        <span>🐑 Sheep: <span id="sheep-count">{{ animals.sheep }}</span></span>
+                        <span>🐄 Cows: <span id="cow-count">{{ animals.get('cow', 0) }}</span></span>
+                        <span>🐔 Chickens: <span id="chicken-count">{{ animals.get('chicken', 0) }}</span></span>
+                        <span>🐑 Sheep: <span id="sheep-count">{{ animals.get('sheep', 0) }}</span></span>
+                        <span>🐷 Pigs: <span id="pig-count">{{ animals.get('pig', 0) }}</span></span>
+                        <span>🐴 Horses: <span id="horse-count">{{ animals.get('horse', 0) }}</span></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Actions Modal -->
+    <!-- Actions Modal (Crops) -->
     <div id="actions-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Actions</h3>
+                <h3>Plant</h3>
                 <span class="close-btn" data-modal="actions">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="action-buttons">
-                    <button class="action-btn plant-btn">
-                        <span class="action-icon">🌱</span>
-                        <span>Plant Seeds</span>
+                <div class="crops-grid">
+                    {% for crop_key, crop_data in crops.items() %}
+                    <button class="crop-btn" data-crop="{{ crop_key }}" data-type="crop">
+                        <span class="crop-icon">{{ crop_data.icon }}</span>
+                        <span class="crop-name">{{ crop_data.name }}</span>
+                        <span class="crop-cost">
+                            {% for resource, amount in crop_data.cost.items() %}
+                                {{ amount }}
+                                {% if resource == 'gold' %}🪙{% elif resource == 'seeds' %}🌱{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="crop-info">{{ crop_data.growth_time }}d → {{ crop_data.revenue }}🪙</span>
                     </button>
-                    <button class="action-btn harvest-btn">
-                        <span class="action-icon">🌾</span>
-                        <span>Harvest</span>
-                    </button>
-                    <button class="action-btn water-btn">
-                        <span class="action-icon">💧</span>
-                        <span>Water</span>
-                    </button>
-                    <button class="action-btn clear-btn">
-                        <span class="action-icon">🗑️</span>
-                        <span>Clear Land</span>
-                    </button>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -247,28 +219,74 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Farm area - no grid squares, just clean background
+            // Game state
+            const GRID_SIZE = 20; // 20x20 grid
+            const CELL_SIZE = 40; // pixels
+            let selectedObject = null;
+            let selectedType = null;
+            let cursorObject = null;
+            let placements = {{ placements|tojson|safe }};
 
-            // Modal functionality
+            // Create grid
+            const farmGrid = document.getElementById('farm-grid');
+            const gridData = [];
+
+            for (let y = 0; y < GRID_SIZE; y++) {
+                gridData[y] = [];
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.style.width = CELL_SIZE + 'px';
+                    cell.style.height = CELL_SIZE + 'px';
+                    cell.style.position = 'absolute';
+                    cell.style.left = (x * CELL_SIZE) + 'px';
+                    cell.style.top = (y * CELL_SIZE) + 'px';
+                    cell.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+                    cell.style.boxSizing = 'border-box';
+
+                    // Cell hover effects
+                    cell.addEventListener('mouseenter', function() {
+                        if (selectedObject) {
+                            cell.style.backgroundColor = 'rgba(255, 215, 0, 0.3)';
+                        }
+                    });
+
+                    cell.addEventListener('mouseleave', function() {
+                        if (!cell.dataset.occupied) {
+                            cell.style.backgroundColor = 'transparent';
+                        }
+                    });
+
+                    // Cell click to place object
+                    cell.addEventListener('click', function() {
+                        if (selectedObject && selectedType) {
+                            placeObject(x, y, selectedType, selectedObject);
+                        }
+                    });
+
+                    farmGrid.appendChild(cell);
+                    gridData[y][x] = cell;
+                }
+            }
+
+            // Load existing placements
+            loadPlacements();
+
             const menuSquares = document.querySelectorAll('.menu-square');
             const modals = document.querySelectorAll('.modal');
             const closeBtns = document.querySelectorAll('.close-btn');
 
-            // Open modal when menu square is clicked
             menuSquares.forEach(square => {
                 square.addEventListener('click', function() {
                     const modalId = this.getAttribute('data-modal') + '-modal';
                     const modal = document.getElementById(modalId);
-                    
-                    // Close all other modals first
                     modals.forEach(m => m.style.display = 'none');
-                    
-                    // Open the selected modal
                     modal.style.display = 'block';
                 });
             });
 
-            // Close modal when close button is clicked
             closeBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const modalId = this.getAttribute('data-modal') + '-modal';
@@ -277,7 +295,6 @@
                 });
             });
 
-            // Close modal when clicking outside of modal content
             modals.forEach(modal => {
                 modal.addEventListener('click', function(e) {
                     if (e.target === modal) {
@@ -286,12 +303,285 @@
                 });
             });
 
-            // Close modal with Escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     modals.forEach(modal => modal.style.display = 'none');
+                    cancelSelection();
                 }
             });
+
+            // Crop selection
+            const cropBtns = document.querySelectorAll('.crop-btn');
+            cropBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedObject = this.dataset.crop;
+                    selectedType = 'crop';
+                    document.getElementById('actions-modal').style.display = 'none';
+                    showCursor(this.querySelector('.crop-icon').textContent);
+                });
+            });
+
+            // Animal selection
+            const animalBtns = document.querySelectorAll('.animal-btn');
+            animalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedObject = this.dataset.animal;
+                    selectedType = 'animal';
+                    document.getElementById('animals-modal').style.display = 'none';
+                    showCursor(this.querySelector('.animal-icon').textContent);
+                });
+            });
+
+            // Building selection
+            const buildingBtns = document.querySelectorAll('.building-btn');
+            buildingBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedObject = this.dataset.building;
+                    selectedType = 'building';
+                    document.getElementById('buildings-modal').style.display = 'none';
+                    showCursor(this.querySelector('.building-icon').textContent);
+                });
+            });
+
+            // Save game button
+            const saveBtn = document.querySelector('.save-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', saveGame);
+            }
+
+            function showCursor(icon) {
+                if (cursorObject) {
+                    cursorObject.remove();
+                }
+
+                cursorObject = document.createElement('div');
+                cursorObject.style.position = 'fixed';
+                cursorObject.style.pointerEvents = 'none';
+                cursorObject.style.fontSize = '30px';
+                cursorObject.style.zIndex = '9999';
+                cursorObject.textContent = icon;
+                document.body.appendChild(cursorObject);
+
+                document.addEventListener('mousemove', updateCursor);
+            }
+
+            function updateCursor(e) {
+                if (cursorObject) {
+                    cursorObject.style.left = (e.clientX + 10) + 'px';
+                    cursorObject.style.top = (e.clientY + 10) + 'px';
+                }
+            }
+
+            function cancelSelection() {
+                selectedObject = null;
+                selectedType = null;
+                if (cursorObject) {
+                    cursorObject.remove();
+                    cursorObject = null;
+                }
+                document.removeEventListener('mousemove', updateCursor);
+            }
+
+            function placeObject(x, y, type, name) {
+                fetch('/api/place_object', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        grid_x: x,
+                        grid_y: y,
+                        object_type: type,
+                        object_name: name
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update resources display
+                        updateResourcesDisplay(data.resources);
+
+                        // Place object on grid
+                        const cell = gridData[y][x];
+                        const objDiv = document.createElement('div');
+                        objDiv.className = 'grid-object';
+                        objDiv.dataset.type = type;
+                        objDiv.dataset.name = name;
+                        objDiv.style.position = 'absolute';
+                        objDiv.style.width = '100%';
+                        objDiv.style.height = '100%';
+                        objDiv.style.display = 'flex';
+                        objDiv.style.alignItems = 'center';
+                        objDiv.style.justifyContent = 'center';
+                        objDiv.style.fontSize = '24px';
+                        objDiv.style.cursor = 'pointer';
+                        objDiv.textContent = getObjectIcon(type, name);
+
+                        // Add tooltip
+                        objDiv.addEventListener('mouseenter', function(e) {
+                            showTooltip(e, type, name);
+                        });
+
+                        objDiv.addEventListener('mouseleave', function() {
+                            hideTooltip();
+                        });
+
+                        // Right-click to remove
+                        objDiv.addEventListener('contextmenu', function(e) {
+                            e.preventDefault();
+                            removeObject(x, y);
+                        });
+
+                        cell.appendChild(objDiv);
+                        cell.dataset.occupied = 'true';
+                        cell.style.backgroundColor = 'rgba(74, 124, 89, 0.3)';
+
+                        cancelSelection();
+                    } else {
+                        alert('Error: ' + data.error);
+                        cancelSelection();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to place object');
+                    cancelSelection();
+                });
+            }
+
+            function removeObject(x, y) {
+                if (confirm('Remove this object?')) {
+                    fetch('/api/remove_object', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            grid_x: x,
+                            grid_y: y
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const cell = gridData[y][x];
+                            const obj = cell.querySelector('.grid-object');
+                            if (obj) obj.remove();
+                            cell.dataset.occupied = 'false';
+                            cell.style.backgroundColor = 'transparent';
+                        }
+                    });
+                }
+            }
+
+            function loadPlacements() {
+                placements.forEach(placement => {
+                    const x = placement.grid_x;
+                    const y = placement.grid_y;
+                    const cell = gridData[y][x];
+
+                    const objDiv = document.createElement('div');
+                    objDiv.className = 'grid-object';
+                    objDiv.dataset.type = placement.object_type;
+                    objDiv.dataset.name = placement.object_name;
+                    objDiv.style.position = 'absolute';
+                    objDiv.style.width = '100%';
+                    objDiv.style.height = '100%';
+                    objDiv.style.display = 'flex';
+                    objDiv.style.alignItems = 'center';
+                    objDiv.style.justifyContent = 'center';
+                    objDiv.style.fontSize = '24px';
+                    objDiv.style.cursor = 'pointer';
+                    objDiv.textContent = getObjectIcon(placement.object_type, placement.object_name);
+
+                    objDiv.addEventListener('mouseenter', function(e) {
+                        showTooltip(e, placement.object_type, placement.object_name);
+                    });
+
+                    objDiv.addEventListener('mouseleave', function() {
+                        hideTooltip();
+                    });
+
+                    objDiv.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        removeObject(x, y);
+                    });
+
+                    cell.appendChild(objDiv);
+                    cell.dataset.occupied = 'true';
+                    cell.style.backgroundColor = 'rgba(74, 124, 89, 0.3)';
+                });
+            }
+
+            function getObjectIcon(type, name) {
+                const crops = {{ crops|tojson|safe }};
+                const animals = {{ animals_data|tojson|safe }};
+                const buildings = {{ buildings|tojson|safe }};
+
+                if (type === 'crop') return crops[name]?.icon || '🌱';
+                if (type === 'animal') return animals[name]?.icon || '🐄';
+                if (type === 'building') return buildings[name]?.icon || '🏠';
+                return '?';
+            }
+
+            function showTooltip(e, type, name) {
+                const tooltip = document.getElementById('tooltip');
+                const title = tooltip.querySelector('.tooltip-title');
+                const details = tooltip.querySelector('.tooltip-details');
+
+                const crops = {{ crops|tojson|safe }};
+                const animals = {{ animals_data|tojson|safe }};
+                const buildings = {{ buildings|tojson|safe }};
+
+                let data = null;
+                if (type === 'crop') data = crops[name];
+                else if (type === 'animal') data = animals[name];
+                else if (type === 'building') data = buildings[name];
+
+                if (data) {
+                    title.textContent = data.name;
+
+                    let detailsHTML = '';
+                    if (type === 'crop') {
+                        detailsHTML = `Growth: ${data.growth_time} days<br>Revenue: ${data.revenue} gold`;
+                    } else if (type === 'animal') {
+                        detailsHTML = `Production: ${data.production_value} gold/day<br>Upkeep: ${data.upkeep} gold/day`;
+                    }
+                    details.innerHTML = detailsHTML;
+
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = (e.clientX + 15) + 'px';
+                    tooltip.style.top = (e.clientY + 15) + 'px';
+                }
+            }
+
+            function hideTooltip() {
+                document.getElementById('tooltip').style.display = 'none';
+            }
+
+            function updateResourcesDisplay(resources) {
+                document.getElementById('gold-amount').textContent = resources.gold || 0;
+                document.getElementById('wood-amount').textContent = resources.wood || 0;
+                document.getElementById('stone-amount').textContent = resources.stone || 0;
+                document.getElementById('food-amount').textContent = resources.food || 0;
+                document.getElementById('seeds-amount').textContent = resources.seeds || 0;
+                document.getElementById('water-amount').textContent = resources.water || 0;
+            }
+
+            function saveGame() {
+                fetch('/api/save_game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Game saved successfully!');
+                    }
+                });
+            }
         });
     </script>
 

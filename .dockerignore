@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+*.db
+farmingSIM-docs/
+README.md
+Dockerfile
+.dockerignore
